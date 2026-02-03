@@ -46,9 +46,157 @@ except Exception as e:
     print(f"Error loading models: {e}")
     print("Please run 'python train_all_models.py' first.")
 
+import pandas as pd
+
+# Load Dataset
+try:
+    df = pd.read_csv('dataset1.csv')
+    print("Dataset loaded successfully!")
+except Exception as e:
+    print(f"Error loading dataset: {e}")
+    df = pd.DataFrame()
+
+# ... (Previous imports exist, but allow this block to fit naturally)
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    # Get unique categories
+    if not df.empty:
+        categories = df['category'].unique().tolist()
+    else:
+        categories = []
+    return render_template('home.html', categories=categories)
+
+@app.route('/directory')
+def directory():
+    if df.empty:
+        return "Dataset not loaded", 500
+    # Pass all items to the directory page
+    items = df.to_dict('records')
+    return render_template('directory.html', items=items)
+
+@app.route('/category/<path:category_name>')
+def category_page(category_name):
+    if df.empty:
+        return "Dataset not loaded", 500
+    
+    # Filter by category
+    items = df[df['category'] == category_name].to_dict('records')
+    # Limit to 7 items as requested
+    items = items[:7]
+    return render_template('restaurants.html', category=category_name, items=items)
+
+@app.route('/review/<review_id>')
+def review_page(review_id):
+    if df.empty:
+        return "Dataset not loaded", 500
+    
+    # Find review by ID
+    # Note: dataset1.csv uses 'review_id'. Ensure string matching.
+    item = df[df['review_id'] == review_id].to_dict('records')
+    
+    if not item:
+        return "Review not found", 404
+    
+    # Generate a stable integer from review_id for the image lock
+    # detailed enough to vary, stable enough to persist
+    image_lock = sum(ord(c) for c in review_id)
+        
+    return render_template('review.html', item=item[0], image_lock=image_lock)
+
+# Keep existing health check below
+
+# Smart Search Logic
+KEYWORD_MAP = {
+    'อาหารอีสาน': ['ลาบ', 'ส้มตำ', 'ไก่ย่าง', 'น้ำตก', 'แจ่วฮ้อน', 'ตับหวาน', 'ปลาร้า', 'ยำ', 'แซ่บ','อาหารอีสาน','อีสาน','อีสาน'],
+    'อาหารญี่ปุ่น': ['ซูชิ', 'ซาชิมิ', 'ราเมง', 'ข้าวหน้า', 'เทมปุระ', 'อูด้ง', 'ปลาดิบ', 'ญี่ปุ่น', 'แซลมอน','ญี่ปุ่น','ญี่ปุ่น'],
+    'ก๋วยเตี๋ยว': ['เส้น', 'บะหมี่', 'เกี๊ยว', 'เย็นตาโฟ', 'เนื้อเปื่อย', 'ไก่ตุ๋น', 'ลูกชิ้น', 'ต้มยำ','ก๋วยเตี๋ยว',],
+    'คาเฟ่': ['กาแฟ', 'โกโก้', 'ลาเต้', 'มัทฉะ', 'เค้ก', 'โทสต์', 'ของหวาน', 'เบเกอรี่', 'ขนมปัง', 'ชา','คาเฟ่'],
+    'ปิ้งย่าง': ['หมูกระทะ', 'ปิ้งย่าง', 'เนื้อย่าง', 'ยากินิกุ', 'บุฟเฟ่ต์', 'ปิ้ง','ย่าง'],
+    'ชาบู': ['สุกี้', 'ชาบู', 'หม่าล่า', 'หม้อไฟ', 'จิ้มจุ่ม','ชาบู'],
+    'อาหารจีน': ['ติ่มซำ', 'ซาลาเปา', 'เป็ดย่าง', 'ฮะเก๋า', 'จีน', 'เกี๊ยวซ่า','อาหารจีน','จีน'],
+    'อาหารใต้': ['แกงไตปลา', 'คั่วกลิ้ง', 'ผัดสะตอ', 'ใบเหลียง', 'ใต้', 'ขมิ้น'],
+    'อาหารตามสั่ง': ['กะเพรา', 'ข้าวผัด', 'คะน้า', 'หมูทอด', 'กระเทียม', 'ผัด', 'ทอด','อาหารตามสั่ง','ตามสั่ง'],
+    'สเต๊ก': ['สเต๊ก', 'เนื้อ', 'พอร์คชอป', 'สลัด', 'มันบด', 'ผักโขม'],
+}
+
+# Static Image URLs for consistent quality
+IMAGE_KEYWORDS = {
+    'อาหารอีสาน': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsUp5uCAJhJt604BdOS0bDmJdt4pTHDHeY91lmbHIEeovwzw0hCKBTtXmiaTDDj4GTof7-ZyCNslUOsxbIDnqPMP3CRNOygrDbJS7s5Bc&s=10', # Som Tum
+    'อาหารญี่ปุ่น': 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=80', # Sushi
+    'ก๋วยเตี๋ยว': 'https://images.unsplash.com/photo-1555126634-323283e090fa?auto=format&fit=crop&w=800&q=80', # Noodle Soup
+    'คาเฟ่': 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80', # Coffee
+    'ปิ้งย่าง': 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80', # BBQ/Grill
+    'ชาบู': 'https://images.unsplash.com/photo-1541544744-597830950e35?auto=format&fit=crop&w=800&q=80', # Hotpot (closest high quality)
+    'อาหารจีน': 'https://cdn.ready-market.com.tw/21cd62de/Templates/pic/Chinese-Food-new.jpg?v=824c575d', # Dimsum
+    'อาหารใต้': 'https://api2.krua.co/wp-content/uploads/2020/08/ImageBanner_1140x507-01-1.jpg', # Curry
+    'อาหารตามสั่ง': 'https://patoisfdimage4-fcbugqebgmbma7he.z01.patois.com/patois/image/2023/10/19/PATOIS_2023-10-19_16_49_48_04f7dd8d-476d-4c12-bec3-d8b766a67151.jpg', # Basil Rice
+    'สเต๊ก': 'https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&w=800&q=80', # Steak
+    'เครื่องดื่ม': 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80', # Drink
+    'เบเกอรี่': 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80', # Cake
+}
+
+# Individual Shop Images (Add shop_id: 'image_url' here)
+SHOP_IMAGES = {
+    # '7bb2c0f7-87aa-47b6-9c67-aac5102c1191': 'https://example.com/my-shop-image.jpg',
+}
+
+def get_shop_image(shop_id, category):
+    # 1. Check if there's an individual shop image
+    if shop_id in SHOP_IMAGES:
+        return SHOP_IMAGES[shop_id]
+    
+    # 2. Fallback to category image
+    return get_image_keyword(category)
+
+def get_image_keyword(category):
+    # Check for direct match
+    for key, val in IMAGE_KEYWORDS.items():
+        if key in category:
+            return val
+    # Additional checks
+    if 'เค้ก' in category: return IMAGE_KEYWORDS['เบเกอรี่']
+    if 'กาแฟ' in category: return IMAGE_KEYWORDS['คาเฟ่']
+    
+    # Default fallback
+    return 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80'
+
+# Make it available to Jinja templates
+app.jinja_env.globals.update(
+    get_image_keyword=get_image_keyword,
+    get_shop_image=get_shop_image
+)
+
+@app.route('/search')
+def search():
+    query = request.args.get('q', '').strip()
+    if not query:
+        return render_template('home.html', categories=df['category'].unique().tolist() if not df.empty else [])
+
+    # Simple logic: Check keywords
+    found_category = None
+    
+    # 1. Exact match with category
+    categories = df['category'].unique().tolist() if not df.empty else []
+    if query in categories:
+        return category_page(query)
+
+    # 2. Keyword match
+    for cat, keywords in KEYWORD_MAP.items():
+        for kw in keywords:
+            if kw in query:
+                found_category = cat
+                break
+        if found_category:
+            break
+    
+    if found_category:
+        return category_page(found_category)
+    
+    # If no match found, just stay on home but maybe show an alert (optional)
+    # For now, let's redirect to home
+    return render_template('home.html', categories=categories, error="ไม่พบหมวดหมู่ที่ค้นหา ลองคำอื่นดูนะครับ")
+
 
 @app.route('/health', methods=['GET'])
 def health():

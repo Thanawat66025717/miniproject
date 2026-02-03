@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>รีวิวร้าน {{ item.category }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f97316;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --border: #e2e8f0;
+            --green: #22c55e;
+            --red: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Prompt', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding-bottom: 80px;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .navbar-content {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 24px;
+            display: flex;
+        }
+
+        .page-title {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cover-img {
+            width: 100%;
+            height: 300px;
+            background: #cbd5e1;
+            background-size: cover;
+            background-position: center;
+            margin-top: 50px;
+            /* Offset for navbar */
+        }
+
+        .shop-info-card {
+            background: white;
+            padding: 24px;
+            margin-top: -20px;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .shop-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .rating-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-sub);
+            margin-bottom: 15px;
+        }
+
+        .rating-box {
+            background: #ffedd5;
+            color: #c2410c;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            padding-bottom: 10px;
+        }
+
+        .act-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 12px;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-main);
+        }
+
+        .act-btn i {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 4px;
+            color: var(--primary);
+        }
+
+        /* Review Input */
+        .review-section {
+            background: white;
+            margin-top: 10px;
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-header {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: 'Prompt', sans-serif;
+            font-size: 16px;
+            color: var(--text-main);
+            background: #f8fafc;
+            resize: none;
+            min-height: 120px;
+            margin-bottom: 15px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+        }
+
+        .btn-analyze {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(249, 115, 22, 0.3);
+            transition: 0.2s;
+        }
+
+        .btn-analyze:active {
+            transform: scale(0.98);
+        }
+
+        /* AI Result */
+        .ai-result {
+            margin-top: 25px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 12px;
+            display: none;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-result::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .res-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .res-pos {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .res-neg {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .res-neu {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-val {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .prob-bar-container {
+            margin-top: 20px;
+        }
+
+        .prob-row {
+            margin-bottom: 8px;
+        }
+
+        .prob-label {
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .prob-track {
+            height: 8px;
+            background: #f1f5f9;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .prob-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        #resWords span {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #475569;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="navbar-content">
+            <a href="/category/{{ item.category }}" class="back-btn"><i class="ri-arrow-left-line"></i></a>
+            <div class="page-title">รายละเอียดร้านค้า</div>
+            <div style="width:24px;"></div> <!-- Spacer -->
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="cover-img" style="background-image: url('{{ get_shop_image(item.review_id, item.category) }}');">
+        </div>
+
+        <div class="shop-info-card">
+            <div class="shop-name">ร้านอาหาร {{ item.category }} #{{ item.review_id[:4] }}</div>
+            <div class="rating-row">
+                <div class="rating-box">{{ item.rating }}</div>
+                <div style="font-size:12px; color:var(--text-sub); display:flex; align-items:center; gap:5px;">
+                    ID: <span id="shopId"
+                        style="font-family:monospace; background:#f1f5f9; padding:2px 6px; border-radius:4px;">{{
+                        item.review_id }}</span>
+                    <i class="ri-file-copy-line" style="cursor:pointer; color:var(--primary);"
+                        onclick="copyShopId()"></i>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function copyShopId() {
+                const id = "{{ item.review_id }}";
+                navigator.clipboard.writeText(id).then(() => {
+                    alert("คัดลอก ID เรียบร้อยแล้ว: " + id);
+                });
+            }
+        </script>
+
+        <div class="review-section">
+            <div class="section-header">เขียนรีวิวของคุณ</div>
+            <textarea id="reviewText"
+                placeholder="รสชาติเป็นยังไง? บรรยากาศดีไหม? ราคาโอเคหรือเปล่า? เล่าให้เราฟังหน่อยครับ..."></textarea>
+
+            <button id="btnAnalyze" class="btn-analyze">โพสต์รีวิว & วิเคราะห์ AI</button>
+
+            <!-- AI Result Box -->
+            <div class="ai-result" id="resBox">
+                <div style="text-align:center;">
+                    <div id="resBadge" class="res-badge res-neu">Analyzing...</div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">AI RATING</div>
+                        <div class="stat-val" id="resRating">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">CONFIDENCE</div>
+                        <div class="stat-val" id="resConf">-</div>
+                    </div>
+                </div>
+
+                <div style="border-top:1px solid #f1f5f9; margin:15px 0;"></div>
+
+                <div style="margin-bottom:10px;">
+                    <div class="stat-label" style="margin-bottom:8px;">คำสำคัญ (Highlights)</div>
+                    <div id="resWords">--</div>
+                </div>
+
+                <!-- Probability Bar -->
+                <div class="prob-bar-container">
+                    <div class="prob-row">
+                        <div class="prob-label"><span>Positive</span> <span id="txtPos">0%</span></div>
+                        <div class="prob-track">
+                            <div id="barPos" class="prob-fill" style="width:0%; background:#22c55e;"></div>
+                        </div>
+                    </div>
+                    <div class="prob-row">
+                        <div class="prob-label"><span>Neutral</span> <span id="txtNeu">0%</span></div>
+                        <div class="prob-track">
+                            <div id="barNeu" class="prob-fill" style="width:0%; background:#94a3b8;"></div>
+                        </div>
+                    </div>
+                    <div class="prob-row">
+                        <div class="prob-label"><span>Negative</span> <span id="txtNeg">0%</span></div>
+                        <div class="prob-track">
+                            <div id="barNeg" class="prob-fill" style="width:0%; background:#ef4444;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const btn = document.getElementById('btnAnalyze');
+        const txt = document.getElementById('reviewText');
+        const resBox = document.getElementById('resBox');
+
+        btn.addEventListener('click', async () => {
+            const text = txt.value.trim();
+            if (!text) return alert("กรุณาเขียนรีวิวก่อนครับ");
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> กำลังวิเคราะห์...';
+
+            try {
+                const res = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+                const data = await res.json();
+
+                resBox.style.display = 'block';
+                resBox.scrollIntoView({ behavior: 'smooth' });
+
+                // Badge
+                const badge = document.getElementById('resBadge');
+                let cls = 'res-neu';
+                let icon = 'ri-emotion-normal-line';
+                if (data.label === 'Positive') { cls = 'res-pos'; icon = 'ri-emotion-happy-line'; }
+                if (data.label === 'Negative') { cls = 'res-neg'; icon = 'ri-emotion-unhappy-line'; }
+                badge.className = 'res-badge ' + cls;
+                badge.innerHTML = `<i class="${icon}"></i> ${data.label}`;
+
+                // Stats
+                document.getElementById('resRating').innerText = data.star_score + ' / 5';
+                document.getElementById('resConf').innerText = (data.sentiment_confidence * 100).toFixed(0) + '%';
+
+                // Probabilities
+                if (data.sentiment_probs) {
+                    const pPos = ((data.sentiment_probs['Positive'] || 0) * 100).toFixed(0);
+                    const pNeu = ((data.sentiment_probs['Neutral'] || 0) * 100).toFixed(0);
+                    const pNeg = ((data.sentiment_probs['Negative'] || 0) * 100).toFixed(0);
+
+                    document.getElementById('txtPos').innerText = pPos + '%';
+                    document.getElementById('barPos').style.width = pPos + '%';
+
+                    document.getElementById('txtNeu').innerText = pNeu + '%';
+                    document.getElementById('barNeu').style.width = pNeu + '%';
+
+                    document.getElementById('txtNeg').innerText = pNeg + '%';
+                    document.getElementById('barNeg').style.width = pNeg + '%';
+                }
+
+                // Words
+                const wordsDiv = document.getElementById('resWords');
+                wordsDiv.innerHTML = '';
+                if (data.important_words && data.important_words.length) {
+                    data.important_words.forEach(w => {
+                        const s = document.createElement('span');
+                        s.innerText = w.word;
+                        wordsDiv.appendChild(s);
+                    });
+                } else {
+                    wordsDiv.innerText = '-';
+                }
+
+            } catch (e) {
+                alert(e);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'โพสต์รีวิว & วิเคราะห์ AI';
+            }
+        });
+    </script>
+</body>
+
+</html>

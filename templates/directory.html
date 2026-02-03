@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Directory - รายชื่อร้านทั้งหมด</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f97316;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Prompt', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding-top: 60px;
+        }
+
+        .navbar {
+            background: var(--card-bg);
+            padding: 12px 20px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+        }
+
+        .navbar-content {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            font-weight: 800;
+            font-size: 20px;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .header-area {
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        /* Search Box */
+        .search-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-family: 'Prompt', sans-serif;
+            font-size: 16px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-sub);
+            font-size: 20px;
+        }
+
+        /* Table Design */
+        .table-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f5f9;
+            padding: 16px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-sub);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 15px;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .id-badge {
+            font-family: monospace;
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #475569;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .copy-btn {
+            cursor: pointer;
+            color: var(--primary);
+            font-size: 16px;
+            transition: 0.2s;
+        }
+
+        .copy-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .cat-tag {
+            background: #ffedd5;
+            color: #c2410c;
+            padding: 2px 8px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .link-btn {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .link-btn:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .hide-mobile {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="navbar-content">
+            <a href="/" class="brand"><i class="ri-arrow-left-line"
+                    style="margin-right:8px; color:var(--text-main);"></i>
+                FoodInsight</a>
+            <div style="font-weight:600; font-size:14px; color:var(--text-sub);">Shop Directory</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header-area">
+            <h1 class="page-title">รายชื่อร้านค้าทั้งหมด</h1>
+            <p style="color:var(--text-sub);">รวมร้านอาหารจากฐานข้อมูล ค้นหาและดูรหัสร้าน (ID) ได้ที่นี่</p>
+        </div>
+
+        <div class="search-container">
+            <i class="ri-search-line search-icon"></i>
+            <input type="text" id="directorySearch" class="search-input"
+                placeholder="ค้นหาชื่อร้าน, หมวดหมู่ หรือ ID...">
+        </div>
+
+        <div class="table-card">
+            <table id="shopTable">
+                <thead>
+                    <tr>
+                        <th>ชื่อร้าน (Mockup)</th>
+                        <th>หมวดหมู่</th>
+                        <th class="hide-mobile">Restaurant ID</th>
+                        <th>จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td style="font-weight:700;">ร้านอาหาร {{ item.category }} #{{ loop.index }}</td>
+                        <td><span class="cat-tag">{{ item.category }}</span></td>
+                        <td class="hide-mobile">
+                            <div class="id-badge">
+                                {{ item.review_id }}
+                                <i class="ri-file-copy-line copy-btn" onclick="copyId('{{ item.review_id }}')"></i>
+                            </div>
+                        </td>
+                        <td>
+                            <a href="/review/{{ item.review_id }}" class="link-btn">ไปที่ร้าน <i
+                                    class="ri-arrow-right-s-line"></i></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function copyId(id) {
+            navigator.clipboard.writeText(id).then(() => {
+                alert("คัดลอก ID เรียบร้อยแล้ว: " + id);
+            });
+        }
+
+        // Search Filter Logic
+        const searchInput = document.getElementById('directorySearch');
+        const table = document.getElementById('shopTable');
+        const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+        searchInput.addEventListener('keyup', function () {
+            const filter = searchInput.value.toLowerCase();
+
+            for (let i = 0; i < rows.length; i++) {
+                const text = rows[i].textContent.toLowerCase();
+                if (text.includes(filter)) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FoodInsight - ค้นหาร้านเด็ด</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f97316;
+            /* Orange-500 */
+            --primary-dark: #ea580c;
+            /* Orange-600 */
+            --accent: #ef4444;
+            /* Red-500 */
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Prompt', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+        }
+
+        .navbar {
+            background: var(--card-bg);
+            padding: 12px 20px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+        }
+
+        .navbar-content {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            font-weight: 800;
+            font-size: 24px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #ffedd5 0%, #ffe4e6 100%);
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .hero h1 {
+            font-size: 28px;
+            margin: 0 0 10px 0;
+            color: #431407;
+        }
+
+        .hero p {
+            color: #78350f;
+            margin: 0 0 24px 0;
+        }
+
+        /* Search Bar */
+        .search-box {
+            background: white;
+            border-radius: 50px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border);
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            flex: 1;
+            font-family: 'Prompt', sans-serif;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        .search-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px 40px 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-main);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+        }
+
+        .category-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            text-decoration: none;
+            color: var(--text-main);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+        }
+
+        .category-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .cat-img {
+            width: 100%;
+            height: 120px;
+            background-color: #f1f5f9;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .cat-name {
+            font-weight: 600;
+            font-size: 15px;
+            padding: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="navbar-content">
+            <div class="brand"><i class="ri-restaurant-2-fill"></i> FoodInsight</div>
+            <div style="font-size:14px; font-weight:600; color:var(--text-sub);">กรุงเทพฯ, TH</div>
+        </div>
+    </div>
+
+    <div class="hero">
+        <h1>ค้นหาร้านอร่อยที่คุณถูกใจ</h1>
+        <p>จากรีวิวจริงของผู้ใช้งานทั่วไทย การันตีความแม่นยำด้วย AI</p>
+
+        <form action="/search" method="get" class="search-box">
+            <i class="ri-search-line search-icon"></i>
+            <input type="text" name="q" placeholder="ค้นหาร้านอาหาร, เมนูเด็ด (เช่น ลาบ, ซูชิ, กะเพรา)..." required>
+            <button type="submit" class="search-btn"><i class="ri-arrow-right-line"></i></button>
+        </form>
+        <div style="margin-top:20px;">
+            <a href="/directory" style="color:var(--primary); text-decoration:none; font-size:14px; font-weight:600;">
+                <i class="ri-list-check-2"></i> ดูรายชื่อร้านทั้งหมด (Shop Directory)
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="section-title">เลือกหมวดหมู่อาหาร</div>
+
+        <div class="grid">
+            {% for cat in categories %}
+
+            <a href="/category/{{ cat }}" class="category-card">
+                <div class="cat-img" style="background-image: url('{{ get_image_keyword(cat) }}');">
+                </div>
+                <div class="cat-name">{{ cat }}</div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+
+</html>
