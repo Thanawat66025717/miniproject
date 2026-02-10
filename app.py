@@ -261,6 +261,21 @@ def predict_single(text, model_key='logreg'):
                 sentiment_confidence = max(probs)
             except:
                 pass # Some models like LinearSVC might not have predict_proba by default
+        elif hasattr(current_sentiment_model, 'decision_function'):
+            try:
+                # Fallback for models like LinearSVC
+                decisions = current_sentiment_model.decision_function(X)[0]
+                if isinstance(decisions, np.ndarray):
+                    # Multi-class: Softmax to get pseudo-probabilities
+                    exp_scores = np.exp(decisions - np.max(decisions))
+                    probs = exp_scores / exp_scores.sum()
+                    sentiment_confidence = max(probs)
+                else:
+                    # Binary case: Sigmoid to get pseudo-probability
+                    prob = 1 / (1 + np.exp(-decisions))
+                    sentiment_confidence = max(prob, 1 - prob)
+            except:
+                pass
 
         # Logic: Override/Boost rating based on keywords
         if is_strong_neg and not is_strong_pos:
@@ -298,23 +313,41 @@ def predict_single(text, model_key='logreg'):
         elif is_strong_neu:
             sentiment_probs = {'Positive': 0.05, 'Neutral': 0.90, 'Negative': 0.05}
             
-        if not sentiment_probs:
-            if hasattr(current_sentiment_model, 'predict_proba'):
-                try:
-                    classes = current_sentiment_model.classes_
-                    probs = current_sentiment_model.predict_proba(X)[0]
-                    for c, p in zip(classes, probs):
-                        sentiment_probs[c] = float(p)
-                except:
-                    pass
-            
             if not sentiment_probs:
-                # Fallback purely based on prediction
-                sentiment_probs = {
-                    'Positive': 1.0 if sentiment_pred == 'Positive' else 0.0,
-                    'Neutral': 1.0 if sentiment_pred == 'Neutral' else 0.0,
-                    'Negative': 1.0 if sentiment_pred == 'Negative' else 0.0,
-                }
+                if hasattr(current_sentiment_model, 'predict_proba'):
+                    try:
+                        classes = current_sentiment_model.classes_
+                        probs = current_sentiment_model.predict_proba(X)[0]
+                        for c, p in zip(classes, probs):
+                            sentiment_probs[c] = float(p)
+                    except:
+                        pass
+                elif hasattr(current_sentiment_model, 'decision_function'):
+                    try:
+                        classes = current_sentiment_model.classes_
+                        decisions = current_sentiment_model.decision_function(X)[0]
+                        if isinstance(decisions, np.ndarray):
+                            exp_scores = np.exp(decisions - np.max(decisions))
+                            probs = exp_scores / exp_scores.sum()
+                            for c, p in zip(classes, probs):
+                                sentiment_probs[c] = float(p)
+                        else:
+                            # Binary case (Positive/Negative)
+                            prob = 1 / (1 + np.exp(-decisions))
+                            # Assumes order is Negative, Positive or similar
+                            # This is a bit safer if we map classes manually if needed, 
+                            # but LinearSVC usually orders classes alphabetically.
+                            sentiment_probs = {classes[0]: 1-float(prob), classes[1]: float(prob)}
+                    except:
+                        pass
+                
+                if not sentiment_probs:
+                    # Fallback purely based on prediction
+                    sentiment_probs = {
+                        'Positive': 1.0 if sentiment_pred == 'Positive' else 0.0,
+                        'Neutral': 1.0 if sentiment_pred == 'Neutral' else 0.0,
+                        'Negative': 1.0 if sentiment_pred == 'Negative' else 0.0,
+                    }
 
         # GLOBAL SAFETY CHECK
         if sentiment_pred == 'Positive' and raw_rating < 4.0: raw_rating = 4.0
