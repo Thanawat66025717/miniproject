@@ -7,18 +7,23 @@
     <title>รีวิวร้าน {{ item.category }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
         :root {
             --primary: #f97316;
+            --primary-dark: #ea580c;
+            --secondary: #64748b;
             --bg: #f8fafc;
             --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-sub: #64748b;
+            --text-main: #0f172a;
+            --text-sub: #475569;
             --border: #e2e8f0;
-            --green: #22c55e;
-            --red: #ef4444;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --gradient: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
         }
 
         * {
@@ -27,30 +32,31 @@
 
         body {
             margin: 0;
-            font-family: 'Prompt', sans-serif;
+            font-family: 'Prompt', 'Outfit', sans-serif;
             background-color: var(--bg);
             color: var(--text-main);
             padding-bottom: 80px;
+            line-height: 1.6;
         }
 
         .navbar {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 15px 20px;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 100;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
             display: flex;
-            align-items: center;
             justify-content: center;
         }
 
         .navbar-content {
             width: 100%;
-            max-width: 600px;
+            max-width: 700px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -61,142 +67,213 @@
             color: var(--text-main);
             font-size: 24px;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #f1f5f9;
         }
 
         .page-title {
             font-weight: 700;
-            font-size: 18px;
+            font-size: 20px;
+            color: var(--text-main);
         }
 
         .container {
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
+            padding: 0 20px;
         }
 
         .cover-img {
             width: 100%;
-            height: 300px;
+            height: 320px;
             background: #cbd5e1;
             background-size: cover;
             background-position: center;
             margin-top: 50px;
-            /* Offset for navbar */
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .cover-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
         }
 
         .shop-info-card {
             background: white;
-            padding: 24px;
-            margin-top: -20px;
-            border-radius: 20px 20px 0 0;
+            padding: 30px;
+            margin-top: -60px;
+            border-radius: 24px;
             position: relative;
             z-index: 10;
-            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
-            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
         .shop-name {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 8px;
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 10px;
             color: var(--text-main);
+            line-height: 1.3;
         }
 
         .rating-row {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 14px;
+            gap: 12px;
+            font-size: 15px;
             color: var(--text-sub);
             margin-bottom: 15px;
         }
 
         .rating-box {
-            background: #ffedd5;
-            color: #c2410c;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 700;
+            background: #fff7ed;
+            color: #ea580c;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: 800;
             display: flex;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
+            border: 1px solid #ffedd5;
         }
 
-        .action-btns {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            padding-bottom: 10px;
-        }
-
-        .act-btn {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            text-align: center;
-            font-size: 12px;
-            cursor: pointer;
-            background: transparent;
-            color: var(--text-main);
-        }
-
-        .act-btn i {
-            display: block;
-            font-size: 20px;
-            margin-bottom: 4px;
-            color: var(--primary);
-        }
-
-        /* Review Input */
+        /* Review Input Section */
         .review-section {
             background: white;
-            margin-top: 10px;
-            padding: 20px;
-            border-bottom: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
         }
 
         .section-header {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header i {
+            color: var(--primary);
         }
 
         textarea {
             width: 100%;
-            padding: 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
             font-family: 'Prompt', sans-serif;
             font-size: 16px;
             color: var(--text-main);
             background: #f8fafc;
             resize: none;
-            min-height: 120px;
-            margin-bottom: 15px;
+            min-height: 140px;
+            margin-bottom: 20px;
+            transition: all 0.2s;
         }
 
         textarea:focus {
             outline: none;
             border-color: var(--primary);
             background: white;
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+        }
+
+        /* Model Selection */
+        .model-selector-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .selector-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .selector-item label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .custom-select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-family: 'Prompt', sans-serif;
+            font-size: 14px;
+            color: var(--text-main);
+            background-color: white;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            transition: 0.2s;
+        }
+
+        .custom-select:hover {
+            border-color: #cbd5e1;
+        }
+
+        .custom-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
         }
 
         .btn-analyze {
             width: 100%;
-            background: var(--primary);
+            background: var(--gradient);
             color: white;
             border: none;
-            padding: 14px;
+            padding: 16px;
             border-radius: 50px;
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 6px rgba(249, 115, 22, 0.3);
-            transition: 0.2s;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-analyze:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(249, 115, 22, 0.4);
         }
 
         .btn-analyze:active {
@@ -205,112 +282,188 @@
 
         /* AI Result */
         .ai-result {
-            margin-top: 25px;
-            padding: 20px;
-            background: #fff;
-            border-radius: 12px;
+            margin-top: 30px;
             display: none;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .result-title {
+            font-size: 24px;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        /* Comparison Layout */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .model-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--shadow);
             border: 1px solid var(--border);
             position: relative;
             overflow: hidden;
+            transition: 0.3s;
         }
 
-        .ai-result::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--primary);
+        .model-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1);
         }
 
-        .res-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 16px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 16px;
+        .model-name {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-sub);
+            font-weight: 700;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .score-display {
+            display: flex;
+            align-items: baseline;
+            gap: 5px;
             margin-bottom: 15px;
         }
 
-        .res-pos {
+        .big-score {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1;
+        }
+
+        .total-score {
+            font-size: 16px;
+            color: var(--text-sub);
+        }
+
+        .badge-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .badge-positive {
             background: #dcfce7;
             color: #166534;
         }
 
-        .res-neg {
+        .badge-negative {
             background: #fee2e2;
             color: #991b1b;
         }
 
-        .res-neu {
+        .badge-neutral {
             background: #f1f5f9;
             color: #475569;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
+        .badge-sarcasm {
+            background: #fef08a;
+            color: #854d0e;
+            border: 1px solid #fde047;
         }
 
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: var(--text-sub);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-val {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--text-main);
-        }
-
-        .prob-bar-container {
-            margin-top: 20px;
-        }
-
-        .prob-row {
-            margin-bottom: 8px;
-        }
-
-        .prob-label {
-            font-size: 12px;
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 4px;
-        }
-
-        .prob-track {
-            height: 8px;
+        .confidence-bar {
+            height: 6px;
             background: #f1f5f9;
-            border-radius: 4px;
+            border-radius: 10px;
+            margin-top: 5px;
             overflow: hidden;
         }
 
-        .prob-fill {
+        .confidence-fill {
             height: 100%;
-            border-radius: 4px;
+            background: var(--gradient);
+            border-radius: 10px;
+            transition: width 1s ease;
         }
 
-        #resWords span {
+        .important-words-box {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .word-tag {
             display: inline-block;
-            background: #f1f5f9;
-            color: #475569;
             padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 13px;
-            margin-right: 6px;
-            margin-bottom: 6px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        /* Single Result */
+        .single-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .single-stars {
+            font-size: 32px;
+            margin: 10px 0;
+            color: #fca5a5;
+        }
+
+        @media (max-width: 600px) {
+            .presentation-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .shop-name {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
@@ -321,22 +474,23 @@
         <div class="navbar-content">
             <a href="/category/{{ item.category }}" class="back-btn"><i class="ri-arrow-left-line"></i></a>
             <div class="page-title">รายละเอียดร้านค้า</div>
-            <div style="width:24px;"></div> <!-- Spacer -->
+            <div style="width:40px;"></div> <!-- Spacer -->
         </div>
     </div>
 
     <div class="container">
         <div class="cover-img" style="background-image: url('{{ get_shop_image(item.review_id, item.category) }}');">
+            <div class="cover-overlay"></div>
         </div>
 
         <div class="shop-info-card">
             <div class="shop-name">ร้านอาหาร {{ item.category }} #{{ item.review_id[:4] }}</div>
             <div class="rating-row">
-                <div class="rating-box">{{ item.rating }}</div>
-                <div style="font-size:12px; color:var(--text-sub); display:flex; align-items:center; gap:5px;">
-                    ID: <span id="shopId"
-                        style="font-family:monospace; background:#f1f5f9; padding:2px 6px; border-radius:4px;">{{
-                        item.review_id }}</span>
+                <div class="rating-box"><i class="ri-star-fill"></i> {{ item.rating }}</div>
+                <div>• {{ item.category }}</div>
+                <div
+                    style="margin-left:auto; font-size:12px; display:flex; align-items:center; gap:5px; background:#f1f5f9; padding:4px 8px; border-radius:6px;">
+                    ID: {{ item.review_id[:8] }}...
                     <i class="ri-file-copy-line" style="cursor:pointer; color:var(--primary);"
                         onclick="copyShopId()"></i>
                 </div>
@@ -353,133 +507,280 @@
         </script>
 
         <div class="review-section">
-            <div class="section-header">เขียนรีวิวของคุณ</div>
-            <textarea id="reviewText"
-                placeholder="รสชาติเป็นยังไง? บรรยากาศดีไหม? ราคาโอเคหรือเปล่า? เล่าให้เราฟังหน่อยครับ..."></textarea>
+            <div class="section-header">
+                <i class="ri-edit-circle-fill"></i> เขียนรีวิวของคุณ
+            </div>
 
-            <button id="btnAnalyze" class="btn-analyze">โพสต์รีวิว & วิเคราะห์ AI</button>
+            <textarea id="reviewText" placeholder="อาหารเป็นยังไงบ้าง? บรรยากาศดีไหม? เล่าให้เราฟังหน่อย..."></textarea>
 
-            <!-- AI Result Box -->
-            <div class="ai-result" id="resBox">
-                <div style="text-align:center;">
-                    <div id="resBadge" class="res-badge res-neu">Analyzing...</div>
-                </div>
-
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-label">AI RATING</div>
-                        <div class="stat-val" id="resRating">-</div>
+            <!-- Modern Model Selector -->
+            <div class="model-selector-card">
+                <div class="selector-grid">
+                    <div class="selector-item">
+                        <label>🤖 Model 1 (Primary)</label>
+                        <select id="modelSelect1" class="custom-select">
+                            <option value="logreg" selected>Logistic Regression</option>
+                            <option value="nb">Naive Bayes</option>
+                            <option value="svm">Support Vector Machine</option>
+                            <option value="rf">Random Forest</option>
+                        </select>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-label">CONFIDENCE</div>
-                        <div class="stat-val" id="resConf">-</div>
-                    </div>
-                </div>
-
-                <div style="border-top:1px solid #f1f5f9; margin:15px 0;"></div>
-
-                <div style="margin-bottom:10px;">
-                    <div class="stat-label" style="margin-bottom:8px;">คำสำคัญ (Highlights)</div>
-                    <div id="resWords">--</div>
-                </div>
-
-                <!-- Probability Bar -->
-                <div class="prob-bar-container">
-                    <div class="prob-row">
-                        <div class="prob-label"><span>Positive</span> <span id="txtPos">0%</span></div>
-                        <div class="prob-track">
-                            <div id="barPos" class="prob-fill" style="width:0%; background:#22c55e;"></div>
-                        </div>
-                    </div>
-                    <div class="prob-row">
-                        <div class="prob-label"><span>Neutral</span> <span id="txtNeu">0%</span></div>
-                        <div class="prob-track">
-                            <div id="barNeu" class="prob-fill" style="width:0%; background:#94a3b8;"></div>
-                        </div>
-                    </div>
-                    <div class="prob-row">
-                        <div class="prob-label"><span>Negative</span> <span id="txtNeg">0%</span></div>
-                        <div class="prob-track">
-                            <div id="barNeg" class="prob-fill" style="width:0%; background:#ef4444;"></div>
-                        </div>
+                    <div class="selector-item">
+                        <label>⚖️ Model 2 (Compare)</label>
+                        <select id="modelSelect2" class="custom-select">
+                            <option value="none" selected>-- Single Mode --</option>
+                            <option value="logreg">Logistic Regression</option>
+                            <option value="nb">Naive Bayes</option>
+                            <option value="svm">Support Vector Machine</option>
+                            <option value="rf">Random Forest</option>
+                        </select>
                     </div>
                 </div>
             </div>
+
+            <button id="btnAnalyze" class="btn-analyze" onclick="analyzeReview()">
+                <i class="ri-magic-line"></i> วิเคราะห์รีวิวด้วย AI
+            </button>
+        </div>
+
+        <!-- AI Result Section -->
+        <div class="ai-result" id="resBox">
+            <div class="result-header">
+                <h3 class="result-title">✨ ผลการวิเคราะห์ AI ✨</h3>
+                <p style="color:var(--text-sub); margin-top:5px; font-size:14px;">
+                    วิเคราะห์ความรู้สึกและให้คะแนนอัตโนมัติ</p>
+            </div>
+
+            <!-- Comparison View -->
+            <div id="comparisonContainer" class="comparison-grid" style="display:none;">
+                <!-- Model 1 -->
+                <div class="model-card">
+                    <div class="model-name" style="color:var(--primary);">
+                        <i class="ri-robot-fill"></i> <span id="modelName1">Model 1</span>
+                    </div>
+                    <div class="score-display">
+                        <span class="big-score" id="ratingShow1">0.0</span>
+                        <span class="total-score">/ 5.0</span>
+                    </div>
+                    <div class="stars" id="starContainer1" style="color:#f59e0b; margin-bottom:15px;"></div>
+
+                    <div class="badge-container">
+                        <span id="sentimentBadge1" class="badge"></span>
+                        <span id="sarcasmBadge1" class="badge badge-sarcasm" style="display:none;">ประชด</span>
+                    </div>
+
+                    <div style="font-size:13px; color:var(--text-sub); margin-bottom:5px;">Confidence</div>
+                    <div class="confidence-bar">
+                        <div id="confBar1" class="confidence-fill" style="width:0%"></div>
+                    </div>
+                    <div style="text-align:right; font-size:12px; color:var(--text-sub); margin-top:2px;"
+                        id="confidenceShow1">0%</div>
+
+                    <div class="important-words-box">
+                        <div style="font-size:12px; font-weight:700; margin-bottom:8px; color:#64748b;">KEYWORD IMPACT
+                        </div>
+                        <div id="importantWords1"></div>
+                    </div>
+                </div>
+
+                <!-- Model 2 -->
+                <div class="model-card">
+                    <div class="model-name" style="color:var(--secondary);">
+                        <i class="ri-scales-3-fill"></i> <span id="modelName2">Model 2</span>
+                    </div>
+                    <div class="score-display">
+                        <span class="big-score" id="ratingShow2">0.0</span>
+                        <span class="total-score">/ 5.0</span>
+                    </div>
+                    <div class="stars" id="starContainer2" style="color:#f59e0b; margin-bottom:15px;"></div>
+
+                    <div class="badge-container">
+                        <span id="sentimentBadge2" class="badge"></span>
+                        <span id="sarcasmBadge2" class="badge badge-sarcasm" style="display:none;">ประชด</span>
+                    </div>
+
+                    <div style="font-size:13px; color:var(--text-sub); margin-bottom:5px;">Confidence</div>
+                    <div class="confidence-bar">
+                        <div id="confBar2" class="confidence-fill" style="width:0%"></div>
+                    </div>
+                    <div style="text-align:right; font-size:12px; color:var(--text-sub); margin-top:2px;"
+                        id="confidenceShow2">0%</div>
+
+                    <div class="important-words-box">
+                        <div style="font-size:12px; font-weight:700; margin-bottom:8px; color:#64748b;">KEYWORD IMPACT
+                        </div>
+                        <div id="importantWords2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Single View -->
+            <div id="singleResultContainer" class="single-card">
+                <div
+                    style="font-size:14px; text-transform:uppercase; color:var(--text-sub); letter-spacing:1px; margin-bottom:10px;">
+                    Predicted Rating</div>
+                <div class="big-score" id="ratingShow" style="font-size:64px;">0.0</div>
+                <div class="stars single-stars" id="starContainer"
+                    style="color:#f59e0b; justify-content:center; display:flex; gap:5px;"></div>
+
+                <div class="badge-container" style="justify-content:center; margin-top:20px;">
+                    <span id="sentimentBadge" class="badge"></span>
+                    <span id="sarcasmBadge" class="badge badge-sarcasm" style="display:none;">ประชด !!</span>
+                </div>
+
+                <div style="margin-top:30px; text-align:left;">
+                    <div style="font-size:13px; font-weight:700; color:var(--text-sub); margin-bottom:10px;">IMPACT
+                        ANALYSIS</div>
+                    <div id="importantWords" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
+                </div>
+
+                <div
+                    style="margin-top:20px; padding-top:20px; border-top:1px solid #f1f5f9; font-size:12px; color:#94a3b8; display:flex; justify-content:space-between;">
+                    <span id="categoryShow">-</span>
+                    <span>Latency: <span id="latencyShow">0</span>ms</span>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
-        const btn = document.getElementById('btnAnalyze');
-        const txt = document.getElementById('reviewText');
-        const resBox = document.getElementById('resBox');
+        function renderStars(containerId, rating) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                if (rating >= i) {
+                    container.innerHTML += '<i class="ri-star-fill"></i>';
+                } else if (rating >= i - 0.5) {
+                    container.innerHTML += '<i class="ri-star-half-fill"></i>';
+                } else {
+                    container.innerHTML += '<i class="ri-star-line" style="opacity:0.3;"></i>';
+                }
+            }
+        }
 
-        btn.addEventListener('click', async () => {
-            const text = txt.value.trim();
-            if (!text) return alert("กรุณาเขียนรีวิวก่อนครับ");
+        function renderImportantWords(containerId, words) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            if (!words || words.length === 0) {
+                container.innerHTML = '<span style="font-size:12px; color:#cbd5e1; font-style:italic;">No significant keywords found</span>';
+                return;
+            }
+            words.forEach(w => {
+                let bg = w.score > 0 ? '#dcfce7' : '#fee2e2';
+                let col = w.score > 0 ? '#166534' : '#991b1b';
+                container.innerHTML += `<span class="word-tag" style="background:${bg}; color:${col};">${w.word} <span style="opacity:0.75; font-size:10px;">${w.score.toFixed(2)}</span></span>`;
+            });
+        }
 
-            btn.disabled = true;
+        function renderBadge(elementId, label) {
+            const el = document.getElementById(elementId);
+            el.className = 'badge';
+            el.innerText = label;
+            if (label === 'Positive') {
+                el.classList.add('badge-positive');
+                el.innerHTML = '<i class="ri-emotion-happy-line"></i> Positive';
+            } else if (label === 'Negative') {
+                el.classList.add('badge-negative');
+                el.innerHTML = '<i class="ri-emotion-unhappy-line"></i> Negative';
+            } else {
+                el.classList.add('badge-neutral');
+                el.innerHTML = '<i class="ri-emotion-normal-line"></i> Neutral';
+            }
+        }
+
+        async function analyzeReview() {
+            const text = document.getElementById('reviewText').value;
+            const model1 = document.getElementById('modelSelect1').value;
+            const model2 = document.getElementById('modelSelect2').value;
+
+            if (!text.trim()) {
+                alert("กรุณาพิมพ์รีวิวก่อนนะครับ");
+                return;
+            }
+
+            const btn = document.getElementById('btnAnalyze');
+            const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> กำลังวิเคราะห์...';
+            btn.disabled = true;
 
             try {
-                const res = await fetch('/predict', {
+                const payload = { text: text, model1: model1 };
+                if (model2 !== 'none') payload.model2 = model2;
+
+                const response = await fetch('/predict', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text })
+                    body: JSON.stringify(payload)
                 });
-                const data = await res.json();
+                const data = await response.json();
 
-                resBox.style.display = 'block';
-                resBox.scrollIntoView({ behavior: 'smooth' });
-
-                // Badge
-                const badge = document.getElementById('resBadge');
-                let cls = 'res-neu';
-                let icon = 'ri-emotion-normal-line';
-                if (data.label === 'Positive') { cls = 'res-pos'; icon = 'ri-emotion-happy-line'; }
-                if (data.label === 'Negative') { cls = 'res-neg'; icon = 'ri-emotion-unhappy-line'; }
-                badge.className = 'res-badge ' + cls;
-                badge.innerHTML = `<i class="${icon}"></i> ${data.label}`;
-
-                // Stats
-                document.getElementById('resRating').innerText = data.star_score + ' / 5';
-                document.getElementById('resConf').innerText = (data.sentiment_confidence * 100).toFixed(0) + '%';
-
-                // Probabilities
-                if (data.sentiment_probs) {
-                    const pPos = ((data.sentiment_probs['Positive'] || 0) * 100).toFixed(0);
-                    const pNeu = ((data.sentiment_probs['Neutral'] || 0) * 100).toFixed(0);
-                    const pNeg = ((data.sentiment_probs['Negative'] || 0) * 100).toFixed(0);
-
-                    document.getElementById('txtPos').innerText = pPos + '%';
-                    document.getElementById('barPos').style.width = pPos + '%';
-
-                    document.getElementById('txtNeu').innerText = pNeu + '%';
-                    document.getElementById('barNeu').style.width = pNeu + '%';
-
-                    document.getElementById('txtNeg').innerText = pNeg + '%';
-                    document.getElementById('barNeg').style.width = pNeg + '%';
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
                 }
 
-                // Words
-                const wordsDiv = document.getElementById('resWords');
-                wordsDiv.innerHTML = '';
-                if (data.important_words && data.important_words.length) {
-                    data.important_words.forEach(w => {
-                        const s = document.createElement('span');
-                        s.innerText = w.word;
-                        wordsDiv.appendChild(s);
-                    });
+                document.getElementById('resBox').style.display = 'block';
+
+                if (data.comparison) {
+                    document.getElementById('comparisonContainer').style.display = 'grid';
+                    document.getElementById('singleResultContainer').style.display = 'none';
+
+                    // Model 1
+                    const res1 = data.model1.result;
+                    document.getElementById('modelName1').innerText = data.model1.name.toUpperCase();
+                    document.getElementById('ratingShow1').innerText = res1.star_score.toFixed(1);
+                    renderStars('starContainer1', res1.star_score);
+                    renderBadge('sentimentBadge1', res1.label);
+                    document.getElementById('sarcasmBadge1').style.display = res1.sarcasm ? 'inline-flex' : 'none';
+
+                    const conf1 = (res1.sentiment_confidence * 100).toFixed(0);
+                    document.getElementById('confidenceShow1').innerText = conf1 + '%';
+                    document.getElementById('confBar1').style.width = conf1 + '%';
+
+                    renderImportantWords('importantWords1', res1.important_words);
+
+                    // Model 2
+                    const res2 = data.model2.result;
+                    document.getElementById('modelName2').innerText = data.model2.name.toUpperCase();
+                    document.getElementById('ratingShow2').innerText = res2.star_score.toFixed(1);
+                    renderStars('starContainer2', res2.star_score);
+                    renderBadge('sentimentBadge2', res2.label);
+                    document.getElementById('sarcasmBadge2').style.display = res2.sarcasm ? 'inline-flex' : 'none';
+
+                    const conf2 = (res2.sentiment_confidence * 100).toFixed(0);
+                    document.getElementById('confidenceShow2').innerText = conf2 + '%';
+                    document.getElementById('confBar2').style.width = conf2 + '%';
+
+                    renderImportantWords('importantWords2', res2.important_words);
+
                 } else {
-                    wordsDiv.innerText = '-';
+                    document.getElementById('comparisonContainer').style.display = 'none';
+                    document.getElementById('singleResultContainer').style.display = 'block';
+
+                    document.getElementById('ratingShow').innerText = data.star_score.toFixed(1);
+                    renderStars('starContainer', data.star_score);
+                    renderBadge('sentimentBadge', data.label);
+                    document.getElementById('sarcasmBadge').style.display = data.sarcasm ? 'inline-flex' : 'none';
+
+                    renderImportantWords('importantWords', data.important_words);
+
+                    document.getElementById('categoryShow').innerText = 'Category: ' + data.category;
+                    document.getElementById('latencyShow').innerText = data.latency_ms;
                 }
 
-            } catch (e) {
-                alert(e);
+                setTimeout(() => {
+                    document.getElementById('resBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+
+            } catch (err) {
+                console.error(err);
+                alert('Connection Error');
             } finally {
+                btn.innerHTML = originalText;
                 btn.disabled = false;
-                btn.innerHTML = 'โพสต์รีวิว & วิเคราะห์ AI';
             }
-        });
+        }
     </script>
 </body>
 

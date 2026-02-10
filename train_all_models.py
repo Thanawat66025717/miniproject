@@ -3,6 +3,9 @@ import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import Ridge, LogisticRegression
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.svm import LinearSVC
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, accuracy_score, classification_report, f1_score, confusion_matrix
 from pythainlp.tokenize import word_tokenize
 import numpy as np
@@ -59,6 +62,7 @@ def thai_tokenizer(text):
 print("\n" + "=" * 50)
 print("Creating TF-IDF vectorizer...")
 print("=" * 50)
+# Note: Naive Bayes requires non-negative values. TF-IDF is fine.
 tfidf = TfidfVectorizer(tokenizer=thai_tokenizer, ngram_range=(1, 2), min_df=3, max_df=0.9)
 X_train_tfidf = tfidf.fit_transform(X_train)
 X_test_tfidf = tfidf.transform(X_test)
@@ -92,28 +96,91 @@ category_model.fit(X_train_tfidf, y_cat_train)
 y_cat_pred = category_model.predict(X_test_tfidf)
 print(f"  Accuracy: {accuracy_score(y_cat_test, y_cat_pred):.4f}")
 print(f"  Macro F1: {f1_score(y_cat_test, y_cat_pred, average='macro'):.4f}")
-print(f"  Confusion Matrix:\n{confusion_matrix(y_cat_test, y_cat_pred)}")
 
 # =============================================
-# 7. Train Sentiment Model (Classification)
+# 7. Train Sentiment Models (Comparison)
 # =============================================
 print("\n" + "=" * 50)
-print("Training SENTIMENT model (Logistic Regression)...")
+print("Training SENTIMENT models (Comparison)...")
 print("=" * 50)
-sentiment_model = LogisticRegression(random_state=42, max_iter=1000, solver='lbfgs', class_weight='balanced')
-sentiment_model.fit(X_train_tfidf, y_sent_train)
 
-y_sent_pred = sentiment_model.predict(X_test_tfidf)
-print(f"  Accuracy: {accuracy_score(y_sent_test, y_sent_pred):.4f}")
-print(f"  Macro F1: {f1_score(y_sent_test, y_sent_pred, average='macro'):.4f}")
-print(f"  Confusion Matrix:\n{confusion_matrix(y_sent_test, y_sent_pred)}")
+sentiment_models = {
+    'Logistic Regression': LogisticRegression(random_state=42, max_iter=1000, solver='lbfgs', class_weight='balanced'),
+    'Naive Bayes': MultinomialNB(),
+    'SVM': LinearSVC(random_state=42, class_weight='balanced', dual=False), # LinearSVC is faster for text
+    'Random Forest': RandomForestClassifier(n_estimators=100, random_state=42, class_weight='balanced', n_jobs=-1)
+}
 
+best_f1 = 0
+best_model_name = ""
+trained_sentiment_models = {}
 
-# --- Error Analysis (Sentiment) ---
-print("\n[Error Analysis - Sentiment] Showing 10 Incorrect Predictions:")
-print("-" * 60)
+for name, model in sentiment_models.items():
+    print(f"\nTraining {name}...")
+    model.fit(X_train_tfidf, y_sent_train)
+    y_pred = model.predict(X_test_tfidf)
+    
+    acc = accuracy_score(y_sent_test, y_pred)
+    f1 = f1_score(y_sent_test, y_pred, average='macro')
+    
+    print(f"  Accuracy: {acc:.4f}")
+    print(f"  Macro F1: {f1:.4f}")
+    
+    trained_sentiment_models[name] = model
+    
+    if f1 > best_f1:
+        best_f1 = f1
+        best_model_name = name
+
+print(f"\n>> Best Sentiment Model: {best_model_name} (F1: {best_f1:.4f})")
+
+# =============================================
+# 8. Train Sarcasm Model (Binary Classification)
+# =============================================
+print("\n" + "=" * 50)
+print("Training SARCASM model (Logistic Regression)...")
+print("=" * 50)
+# Keeping LogReg for Sarcasm as base, but could also compare if requested. For now, stick to original.
+sarcasm_model = LogisticRegression(random_state=42, max_iter=1000, solver='lbfgs', class_weight='balanced')
+sarcasm_model.fit(X_train_tfidf, y_sarc_train)
+
+y_sarc_pred = sarcasm_model.predict(X_test_tfidf)
+print(f"  Accuracy: {accuracy_score(y_sarc_test, y_sarc_pred):.4f}")
+print(f"  Macro F1: {f1_score(y_sarc_test, y_sarc_pred, average='macro'):.4f}")
+
+# =============================================
+# 9. Save All Models
+# =============================================
+print("\n" + "=" * 50)
+print("Saving all models to .joblib...")
+print("=" * 50)
+
+# 1. Base Models
+models_to_save = {
+    'tfidf_vectorizer.joblib': tfidf,
+    'rating_model.joblib': rating_model,
+    'category_model.joblib': category_model,
+    'sarcasm_model.joblib': sarcasm_model,
+    # Save the BEST sentiment model as the default 'sentiment_model.joblib' for backward compatibility
+    'sentiment_model.joblib': trained_sentiment_models[best_model_name]
+}
+
+# 2. Save Specific Sentiment Models for Comparison
+models_to_save['sentiment_model_logreg.joblib'] = trained_sentiment_models['Logistic Regression']
+models_to_save['sentiment_model_nb.joblib'] = trained_sentiment_models['Naive Bayes']
+models_to_save['sentiment_model_svm.joblib'] = trained_sentiment_models['SVM']
+models_to_save['sentiment_model_rf.joblib'] = trained_sentiment_models['Random Forest']
+
+for filename, model in models_to_save.items():
+    joblib.dump(model, filename)
+    print(f"  Saved: {filename}")
+
+# Save Errors (using the Best Model's predictions for the error page)
+best_model = trained_sentiment_models[best_model_name]
+y_sent_pred_best = best_model.predict(X_test_tfidf)
+
 errors = []
-for i, (true_label, pred_label) in enumerate(zip(y_sent_test, y_sent_pred)):
+for i, (true_label, pred_label) in enumerate(zip(y_sent_test, y_sent_pred_best)):
     if true_label != pred_label:
         original_text = X.iloc[idx_test[i]]
         errors.append({
@@ -122,51 +189,12 @@ for i, (true_label, pred_label) in enumerate(zip(y_sent_test, y_sent_pred)):
             "predicted": pred_label
         })
 
-for i, err in enumerate(errors[:10]):
-    print(f"{i+1}. Text: {err['text'][:80]}...")
-    print(f"   Actual: {err['actual']} | Predicted: {err['predicted']}")
-print("-" * 60)
-
-# =============================================
-# 8. Train Sarcasm Model (Binary Classification)
-# =============================================
-print("\n" + "=" * 50)
-print("Training SARCASM model (Logistic Regression)...")
-print("=" * 50)
-sarcasm_model = LogisticRegression(random_state=42, max_iter=1000, solver='lbfgs', class_weight='balanced')
-sarcasm_model.fit(X_train_tfidf, y_sarc_train)
-
-y_sarc_pred = sarcasm_model.predict(X_test_tfidf)
-print(f"  Accuracy: {accuracy_score(y_sarc_test, y_sarc_pred):.4f}")
-print(f"  Macro F1: {f1_score(y_sarc_test, y_sarc_pred, average='macro'):.4f}")
-print(f"  Confusion Matrix:\n{confusion_matrix(y_sarc_test, y_sarc_pred)}")
-
-# =============================================
-# 9. Save All Models (using joblib as required)
-# =============================================
-print("\n" + "=" * 50)
-print("Saving all models to .joblib...")
-print("=" * 50)
-
-models_to_save = {
-    'tfidf_vectorizer.joblib': tfidf,
-    'rating_model.joblib': rating_model,
-    'category_model.joblib': category_model,
-    'sentiment_model.joblib': sentiment_model,
-    'sarcasm_model.joblib': sarcasm_model
-}
-
-for filename, model in models_to_save.items():
-    joblib.dump(model, filename)
-    print(f"  Saved: {filename}")
-
-# Save Errors for Web App (Requirement: Error Example Page)
 import json
 with open('errors.json', 'w', encoding='utf-8') as f:
-    json.dump(errors[:20], f, ensure_ascii=False, indent=2) # Save top 20 errors
-print("  Saved: errors.json")
+    json.dump(errors[:20], f, ensure_ascii=False, indent=2) 
+print("  Saved: errors.json (Generated from Best Model)")
 
 print("\n" + "=" * 50)
-print("Training complete! All models saved successfully.")
+print("Training complete! All comparison models saved.")
 print("=" * 50)
 
