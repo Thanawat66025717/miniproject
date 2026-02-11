@@ -458,7 +458,8 @@
             }
 
             .comparison-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr !important;
+                /* Force stack on mobile */
             }
 
             .shop-name {
@@ -513,132 +514,23 @@
 
             <textarea id="reviewText" placeholder="อาหารเป็นยังไงบ้าง? บรรยากาศดีไหม? เล่าให้เราฟังหน่อย..."></textarea>
 
-            <!-- Modern Model Selector -->
-            <div class="model-selector-card">
-                <div class="selector-grid">
-                    <div class="selector-item">
-                        <label>🤖 Model 1 (Primary)</label>
-                        <select id="modelSelect1" class="custom-select">
-                            <option value="logreg" selected>Logistic Regression</option>
-                            <option value="nb">Naive Bayes</option>
-                            <option value="svm">Support Vector Machine</option>
-                            <option value="rf">Random Forest</option>
-                        </select>
-                    </div>
-                    <div class="selector-item">
-                        <label>⚖️ Model 2 (Compare)</label>
-                        <select id="modelSelect2" class="custom-select">
-                            <option value="none" selected>-- Single Mode --</option>
-                            <option value="logreg">Logistic Regression</option>
-                            <option value="nb">Naive Bayes</option>
-                            <option value="svm">Support Vector Machine</option>
-                            <option value="rf">Random Forest</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
             <button id="btnAnalyze" class="btn-analyze" onclick="analyzeReview()">
-                <i class="ri-magic-line"></i> วิเคราะห์รีวิวด้วย AI
+                <i class="ri-magic-line"></i> วิเคราะห์รีวิวด้วย AI (All Models)
             </button>
         </div>
 
         <!-- AI Result Section -->
         <div class="ai-result" id="resBox">
             <div class="result-header">
-                <h3 class="result-title">✨ ผลการวิเคราะห์ AI ✨</h3>
+                <h3 class="result-title">✨ ผลการวิเคราะห์จาก 4 โมเดล ✨</h3>
                 <p style="color:var(--text-sub); margin-top:5px; font-size:14px;">
-                    วิเคราะห์ความรู้สึกและให้คะแนนอัตโนมัติ</p>
+                    เปรียบเทียบผลลัพธ์จาก Logistic Regression, Naive Bayes, SVM, และ Random Forest</p>
             </div>
 
-            <!-- Comparison View -->
-            <div id="comparisonContainer" class="comparison-grid" style="display:none;">
-                <!-- Model 1 -->
-                <div class="model-card">
-                    <div class="model-name" style="color:var(--primary);">
-                        <i class="ri-robot-fill"></i> <span id="modelName1">Model 1</span>
-                    </div>
-                    <div class="score-display">
-                        <span class="big-score" id="ratingShow1">0.0</span>
-                        <span class="total-score">/ 5.0</span>
-                    </div>
-                    <div class="stars" id="starContainer1" style="color:#f59e0b; margin-bottom:15px;"></div>
-
-                    <div class="badge-container">
-                        <span id="sentimentBadge1" class="badge"></span>
-                        <span id="sarcasmBadge1" class="badge badge-sarcasm" style="display:none;">ประชด</span>
-                    </div>
-
-                    <div style="font-size:13px; color:var(--text-sub); margin-bottom:5px;">Confidence</div>
-                    <div class="confidence-bar">
-                        <div id="confBar1" class="confidence-fill" style="width:0%"></div>
-                    </div>
-                    <div style="text-align:right; font-size:12px; color:var(--text-sub); margin-top:2px;"
-                        id="confidenceShow1">0%</div>
-
-                    <div class="important-words-box">
-                        <div style="font-size:12px; font-weight:700; margin-bottom:8px; color:#64748b;">KEYWORD IMPACT
-                        </div>
-                        <div id="importantWords1"></div>
-                    </div>
-                </div>
-
-                <!-- Model 2 -->
-                <div class="model-card">
-                    <div class="model-name" style="color:var(--secondary);">
-                        <i class="ri-scales-3-fill"></i> <span id="modelName2">Model 2</span>
-                    </div>
-                    <div class="score-display">
-                        <span class="big-score" id="ratingShow2">0.0</span>
-                        <span class="total-score">/ 5.0</span>
-                    </div>
-                    <div class="stars" id="starContainer2" style="color:#f59e0b; margin-bottom:15px;"></div>
-
-                    <div class="badge-container">
-                        <span id="sentimentBadge2" class="badge"></span>
-                        <span id="sarcasmBadge2" class="badge badge-sarcasm" style="display:none;">ประชด</span>
-                    </div>
-
-                    <div style="font-size:13px; color:var(--text-sub); margin-bottom:5px;">Confidence</div>
-                    <div class="confidence-bar">
-                        <div id="confBar2" class="confidence-fill" style="width:0%"></div>
-                    </div>
-                    <div style="text-align:right; font-size:12px; color:var(--text-sub); margin-top:2px;"
-                        id="confidenceShow2">0%</div>
-
-                    <div class="important-words-box">
-                        <div style="font-size:12px; font-weight:700; margin-bottom:8px; color:#64748b;">KEYWORD IMPACT
-                        </div>
-                        <div id="importantWords2"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Single View -->
-            <div id="singleResultContainer" class="single-card">
-                <div
-                    style="font-size:14px; text-transform:uppercase; color:var(--text-sub); letter-spacing:1px; margin-bottom:10px;">
-                    Predicted Rating</div>
-                <div class="big-score" id="ratingShow" style="font-size:64px;">0.0</div>
-                <div class="stars single-stars" id="starContainer"
-                    style="color:#f59e0b; justify-content:center; display:flex; gap:5px;"></div>
-
-                <div class="badge-container" style="justify-content:center; margin-top:20px;">
-                    <span id="sentimentBadge" class="badge"></span>
-                    <span id="sarcasmBadge" class="badge badge-sarcasm" style="display:none;">ประชด !!</span>
-                </div>
-
-                <div style="margin-top:30px; text-align:left;">
-                    <div style="font-size:13px; font-weight:700; color:var(--text-sub); margin-bottom:10px;">IMPACT
-                        ANALYSIS</div>
-                    <div id="importantWords" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
-                </div>
-
-                <div
-                    style="margin-top:20px; padding-top:20px; border-top:1px solid #f1f5f9; font-size:12px; color:#94a3b8; display:flex; justify-content:space-between;">
-                    <span id="categoryShow">-</span>
-                    <span>Latency: <span id="latencyShow">0</span>ms</span>
-                </div>
+            <!-- Grid View for 4 Models -->
+            <div id="resultsGrid" class="comparison-grid"
+                style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                <!-- Cards will be injected here by JS -->
             </div>
 
         </div>
@@ -673,26 +565,35 @@
             });
         }
 
-        function renderBadge(elementId, label) {
-            const el = document.getElementById(elementId);
-            el.className = 'badge';
-            el.innerText = label;
+        function getBadgeHtml(label) {
+            let badgeClass = 'badge-neutral';
+            let icon = 'ri-emotion-normal-line';
             if (label === 'Positive') {
-                el.classList.add('badge-positive');
-                el.innerHTML = '<i class="ri-emotion-happy-line"></i> Positive';
+                badgeClass = 'badge-positive';
+                icon = 'ri-emotion-happy-line';
             } else if (label === 'Negative') {
-                el.classList.add('badge-negative');
-                el.innerHTML = '<i class="ri-emotion-unhappy-line"></i> Negative';
-            } else {
-                el.classList.add('badge-neutral');
-                el.innerHTML = '<i class="ri-emotion-normal-line"></i> Neutral';
+                badgeClass = 'badge-negative';
+                icon = 'ri-emotion-unhappy-line';
             }
+            return `<span class="badge ${badgeClass}"><i class="${icon}"></i> ${label}</span>`;
         }
+
+        const MODEL_NAMES = {
+            'logreg': 'Logistic Regression',
+            'nb': 'Naive Bayes',
+            'svm': 'Support Vector Machine',
+            'rf': 'Random Forest'
+        };
+
+        const MODEL_COLORS = {
+            'logreg': '#f97316', // Orange
+            'nb': '#3b82f6',     // Blue
+            'svm': '#8b5cf6',    // Violet
+            'rf': '#10b981'      // Green
+        };
 
         async function analyzeReview() {
             const text = document.getElementById('reviewText').value;
-            const model1 = document.getElementById('modelSelect1').value;
-            const model2 = document.getElementById('modelSelect2').value;
 
             if (!text.trim()) {
                 alert("กรุณาพิมพ์รีวิวก่อนนะครับ");
@@ -705,13 +606,10 @@
             btn.disabled = true;
 
             try {
-                const payload = { text: text, model1: model1 };
-                if (model2 !== 'none') payload.model2 = model2;
-
                 const response = await fetch('/predict', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({ text: text })
                 });
                 const data = await response.json();
 
@@ -721,52 +619,67 @@
                 }
 
                 document.getElementById('resBox').style.display = 'block';
+                const grid = document.getElementById('resultsGrid');
+                grid.innerHTML = ''; // Clear previous
 
-                if (data.comparison) {
-                    document.getElementById('comparisonContainer').style.display = 'grid';
-                    document.getElementById('singleResultContainer').style.display = 'none';
+                if (data.mode === 'all' && data.results) {
+                    // Order to display
+                    const order = ['logreg', 'nb', 'svm', 'rf'];
 
-                    // Model 1
-                    const res1 = data.model1.result;
-                    document.getElementById('modelName1').innerText = data.model1.name.toUpperCase();
-                    document.getElementById('ratingShow1').innerText = res1.star_score.toFixed(1);
-                    renderStars('starContainer1', res1.star_score);
-                    renderBadge('sentimentBadge1', res1.label);
-                    document.getElementById('sarcasmBadge1').style.display = res1.sarcasm ? 'inline-flex' : 'none';
+                    order.forEach(key => {
+                        const res = data.results[key];
+                        if (!res) return;
 
-                    const conf1 = (res1.sentiment_confidence * 100).toFixed(0);
-                    document.getElementById('confidenceShow1').innerText = conf1 + '%';
-                    document.getElementById('confBar1').style.width = conf1 + '%';
+                        const modelName = MODEL_NAMES[key] || key.toUpperCase();
+                        const modelColor = MODEL_COLORS[key] || '#64748b';
+                        const conf = (res.sentiment_confidence * 100).toFixed(0);
+                        const starsId = `stars-${key}`;
+                        const wordsId = `words-${key}`;
+                        const sarcasmDisplay = res.sarcasm ? 'inline-flex' : 'none';
 
-                    renderImportantWords('importantWords1', res1.important_words);
+                        const cardHtml = `
+                            <div class="model-card">
+                                <div class="model-name" style="color:${modelColor}; border-bottom-color:${modelColor}20;">
+                                    <i class="ri-robot-fill"></i> ${modelName}
+                                </div>
+                                <div class="score-display">
+                                    <span class="big-score">${res.star_score.toFixed(1)}</span>
+                                    <span class="total-score">/ 5.0</span>
+                                </div>
+                                <div class="stars" id="${starsId}" style="color:#f59e0b; margin-bottom:15px;"></div>
 
-                    // Model 2
-                    const res2 = data.model2.result;
-                    document.getElementById('modelName2').innerText = data.model2.name.toUpperCase();
-                    document.getElementById('ratingShow2').innerText = res2.star_score.toFixed(1);
-                    renderStars('starContainer2', res2.star_score);
-                    renderBadge('sentimentBadge2', res2.label);
-                    document.getElementById('sarcasmBadge2').style.display = res2.sarcasm ? 'inline-flex' : 'none';
+                                <div class="badge-container">
+                                    ${getBadgeHtml(res.label)}
+                                    <span class="badge badge-sarcasm" style="display:${sarcasmDisplay};">ประชด</span>
+                                </div>
 
-                    const conf2 = (res2.sentiment_confidence * 100).toFixed(0);
-                    document.getElementById('confidenceShow2').innerText = conf2 + '%';
-                    document.getElementById('confBar2').style.width = conf2 + '%';
+                                <div style="font-size:13px; color:var(--text-sub); margin-bottom:5px;">Confidence</div>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" style="width:${conf}%; background:${modelColor};"></div>
+                                </div>
+                                <div style="text-align:right; font-size:12px; color:var(--text-sub); margin-top:2px;">${conf}%</div>
 
-                    renderImportantWords('importantWords2', res2.important_words);
+                                <div class="important-words-box">
+                                    <div style="font-size:12px; font-weight:700; margin-bottom:8px; color:#64748b;">KEYWORD IMPACT</div>
+                                    <div id="${wordsId}"></div>
+                                </div>
+                            </div>
+                        `;
 
-                } else {
-                    document.getElementById('comparisonContainer').style.display = 'none';
-                    document.getElementById('singleResultContainer').style.display = 'block';
+                        grid.innerHTML += cardHtml;
 
-                    document.getElementById('ratingShow').innerText = data.star_score.toFixed(1);
-                    renderStars('starContainer', data.star_score);
-                    renderBadge('sentimentBadge', data.label);
-                    document.getElementById('sarcasmBadge').style.display = data.sarcasm ? 'inline-flex' : 'none';
+                        // Render dynamic content after injection
+                        // Use setTimeout to ensure DOM is ready (though sync in loop usually works)
+                    });
 
-                    renderImportantWords('importantWords', data.important_words);
-
-                    document.getElementById('categoryShow').innerText = 'Category: ' + data.category;
-                    document.getElementById('latencyShow').innerText = data.latency_ms;
+                    // Second pass to render stars and words (simpler DOM manipulation)
+                    order.forEach(key => {
+                        const res = data.results[key];
+                        if (res) {
+                            renderStars(`stars-${key}`, res.star_score);
+                            renderImportantWords(`words-${key}`, res.important_words);
+                        }
+                    });
                 }
 
                 setTimeout(() => {

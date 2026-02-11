@@ -409,23 +409,17 @@ def predict():
     if not text:
         return jsonify({'error': 'No text provided'}), 400
 
-    # Check for Comparison Mode
-    model1_key = data.get('model1', 'logreg')
-    model2_key = data.get('model2', None)
+    # Always predict with all 4 models
+    models = ['logreg', 'nb', 'svm', 'rf']
+    results = {}
     
-    result1 = predict_single(text, model1_key)
-    
-    response = result1 # Default structure for backward compatibility
-    
-    if model2_key:
-        result2 = predict_single(text, model2_key)
-        response = {
-            'comparison': True,
-            'model1': { 'name': model1_key, 'result': result1 },
-            'model2': { 'name': model2_key, 'result': result2 }
-        }
-    
-    return jsonify(response)
+    for model_key in models:
+        results[model_key] = predict_single(text, model_key)
+        
+    return jsonify({
+        'mode': 'all',
+        'results': results
+    })
 
 @app.route('/errors')
 def show_errors():
